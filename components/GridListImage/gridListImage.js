@@ -1,49 +1,53 @@
 import React from "react";
 import LazyLoad from "react-lazyload";
-import { makeStyles } from "@material-ui/core/styles";
+import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
+import useStyles from './styleHook';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: "flex",
-    flexWrap: "wrap",
-    justifyContent: "space-around",
-    overflow: "hidden",
-    // backgroundColor: theme.palette.background.paper,
-    marginTop: '4rem',
-    backgroundImage:
-      "linear-gradient(140deg, #000000 0%, #333333 50%, #333333 75%)",
-  },
-  gridList: {
-    width: "100%",
-  },
-  icon: {
-    color: "rgba(255, 255, 255, 0.54)",
-  },
-}));
 
-const gridListImage = ({ imageData }) => {
+
+const gridListImage = ({ imageData, width }) => {
   const classes = useStyles();
+
+  const getGridListCols = () => {
+    console.log(width)
+    if (isWidthUp('xl', width)) {
+      return 4;
+    }
+
+    if (isWidthUp('lg', width)) {
+      return 3;
+    }
+
+    if (isWidthUp('md', width)) {
+      return 2;
+    }
+
+    return 1;
+  }
 
   return (
     <div className={classes.root}>
       <GridList
         cellHeight={"auto"}
         className={classes.gridList}
-        cols={4}
         spacing={30}
+        cols={getGridListCols()}
       >
         {/* <GridListTile key="Subheader" cols={2} style={{ height: "auto" }}>
           <ListSubheader component="div">December</ListSubheader>
         </GridListTile> */}
         {imageData.map((image) => (
-          <GridListTile key={image.imgLink}>
-            <LazyLoad height={'auto'}>
+          <GridListTile
+            key={image.imgLink}
+            className={classes.gridListTile}
+          >
+            <LazyLoad height={"auto"}>
               <img src={image.imgLink} alt={image.title} />
             </LazyLoad>
             <GridListTileBar
@@ -65,4 +69,4 @@ const gridListImage = ({ imageData }) => {
   );
 };
 
-export default gridListImage;
+export default withWidth()(gridListImage);
